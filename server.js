@@ -1,3 +1,4 @@
+require('dotenv').config(); // Load the mongo URI from .env file
 const express = require("express");
 const cors = require("cors");
 const { ObjectId } = require('mongodb');
@@ -9,6 +10,15 @@ const port = 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Confirm DB connection
+connectToDatabase()
+  .then(() => {
+    console.log("🟢 Database is ready");
+  })
+  .catch((err) => {
+    console.error("🔴 Error connecting to database:", err.message);
+  });
 
 // API route to fetch hostel data
 app.get("/api/hostel", async (req, res) => {

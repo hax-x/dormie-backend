@@ -1,7 +1,8 @@
-// mongo.js
+// ./database/mongo.js
 const { MongoClient, ServerApiVersion } = require('mongodb');
-require('dotenv').config(); // Ensure you have dotenv installed and configured
-const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/mydormie"; // Fallback to local MongoDB if no URI is provided
+require('dotenv').config(); // Load environment variables
+
+const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/mydormie";
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -11,14 +12,18 @@ const client = new MongoClient(uri, {
   }
 });
 
-// Instead of immediately connecting and disconnecting, export the client
+let db = null;
+
 async function connectToDatabase() {
+  if (db) return db;
+
   try {
     await client.connect();
-    console.log("Successfully connected to MongoDB!");
-    return client.db("mydormie"); // Return the database instance
+    console.log("MongoDB connected successfully");
+    db = client.db("mydormie");
+    return db;
   } catch (error) {
-    console.error("Could not connect to MongoDB:", error);
+    console.error("MongoDB connection failed:", error.message);
     throw error;
   }
 }
